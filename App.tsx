@@ -19,11 +19,20 @@ interface Pais {
   };
 }
 
+interface Capital {
+  name: {
+    official: string;
+  };
+  flags: {
+    png: string;
+  };
+}
+
 export default function App() {
   const [busca, setBusca] = useState('')
-  const [capital, setCapital] = useState('')
   const [paises, setPaises] = useState<Pais[]>([])
-  
+  const [buscaCapital, setBuscaCapital] = useState('')
+  const [capital, setCapital] = useState<Capital[]>([])
 
   const buscarPorNome = async () => {
     const resposta = await fetch(
@@ -38,14 +47,14 @@ export default function App() {
 
   const buscarPorCapital = async () => {
   const resposta = await fetch(
-    `https://restcountries.com/v3.1/capital/${capital}`
+    `https://restcountries.com/v3.1/capital/${buscaCapital}`
   )
 
-  const info: Pais[] = await resposta.json()
+  const info: Capital[] = await resposta.json()
 
-  const pais = info[0]
+  const capital = info[0]
 
-  setPaises([pais])
+  setCapital([capital])
 }
 
   return (
@@ -64,20 +73,7 @@ export default function App() {
           Buscar por nome
         </Text>
       </Pressable>
-      <TextInput
-        style={styles.input}
-        placeholder='Digite a capital...'
-        value={capital}
-        onChangeText={(novoTexto) => setCapital(novoTexto)}
-      />
 
-      <Pressable
-        onPress={buscarPorCapital}
-        style={styles.button}>
-        <Text style={styles.buttonText}>
-          Buscar por capital
-        </Text>
-      </Pressable>
       <FlatList
         style={styles.list}
         data={paises}
@@ -90,6 +86,34 @@ export default function App() {
             <Text style={styles.listItemText}>
               Nome oficial do pais: {item.name.official}
             </Text>
+          </View>
+        )}
+      />
+
+      <View style={{ height: 20 }} />
+      
+      <TextInput
+        style={styles.input}
+        placeholder='Digite a capital...'
+        value={buscaCapital}
+        onChangeText={(novoTexto) => setBuscaCapital(novoTexto)}
+      />
+    
+      <Pressable
+        onPress={buscarPorCapital}
+        style={styles.button}>
+        <Text style={styles.buttonText}>
+          Buscar por capital
+        </Text>
+      </Pressable>
+      <FlatList
+        style={styles.list}
+        data={capital}
+        renderItem={({ item }) => (
+          <View style={styles.listItem}>
+            <Text style={styles.listItemText}>
+              Nome oficial do pais: {item.name.official}
+            </Text>
 
             <Image
               source={{ uri: item.flags.png }}
@@ -98,6 +122,7 @@ export default function App() {
           </View>
         )}
       />
+      
     </View>
   );
 }
