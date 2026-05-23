@@ -4,19 +4,26 @@ import {
   Text,
   TextInput,
   View,
-  FlatList
+  FlatList,
+  Image
 } from 'react-native'
 import { useState } from 'react'
 
-interface Pais{
+interface Pais {
   name: {
     common: string;
+    official: string;
+  };
+  flags: {
+    png: string;
   };
 }
 
 export default function App() {
   const [busca, setBusca] = useState('')
-  const [paises, setPaises] = useState <Pais[]> ([])
+  const [capital, setCapital] = useState('')
+  const [paises, setPaises] = useState<Pais[]>([])
+  
 
   const buscarPorNome = async () => {
     const resposta = await fetch(
@@ -28,6 +35,18 @@ export default function App() {
 
     setPaises([pais])
   }
+
+  const buscarPorCapital = async () => {
+  const resposta = await fetch(
+    `https://restcountries.com/v3.1/capital/${capital}`
+  )
+
+  const info: Pais[] = await resposta.json()
+
+  const pais = info[0]
+
+  setPaises([pais])
+}
 
   return (
     <View style={styles.container}>
@@ -45,6 +64,20 @@ export default function App() {
           Buscar por nome
         </Text>
       </Pressable>
+      <TextInput
+        style={styles.input}
+        placeholder='Digite a capital...'
+        value={capital}
+        onChangeText={(novoTexto) => setCapital(novoTexto)}
+      />
+
+      <Pressable
+        onPress={buscarPorCapital}
+        style={styles.button}>
+        <Text style={styles.buttonText}>
+          Buscar por capital
+        </Text>
+      </Pressable>
       <FlatList
         style={styles.list}
         data={paises}
@@ -53,6 +86,15 @@ export default function App() {
             <Text style={styles.listItemText}>
               Nome comum do pais: {item.name.common}
             </Text>
+
+            <Text style={styles.listItemText}>
+              Nome oficial do pais: {item.name.official}
+            </Text>
+
+            <Image
+              source={{ uri: item.flags.png }}
+              style={styles.bandeira}
+            />
           </View>
         )}
       />
@@ -103,11 +145,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 4,
     borderRadius: 4,
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center'
   },
   listItemText: {
     textAlign: 'center',
     width: '100%'
+  },
+  bandeira: {
+  width: 120,
+  height: 80,
+  marginTop: 8
   }
 });
