@@ -1,20 +1,113 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  FlatList
+} from 'react-native'
+import { useState } from 'react'
+
+interface Pais{
+  name: {
+    common: string;
+  };
+}
 
 export default function App() {
+  const [busca, setBusca] = useState('')
+  const [paises, setPaises] = useState <Pais[]> ([])
+
+  const buscarPorNome = async () => {
+    const resposta = await fetch(
+      `https://restcountries.com/v3.1/name/${busca}`
+    )
+    const info: Pais[] = await resposta.json()
+
+    const pais = info[0]
+
+    setPaises([pais])
+  }
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <TextInput
+        style={styles.input}
+        placeholder='Digite o nome do pais...'
+        value={busca}
+        onChangeText={(novoTexto) => setBusca(novoTexto)}
+      />
+      <Pressable
+        onPress={buscarPorNome}
+        style={styles.button}>
+        <Text
+          style={styles.buttonText}>
+          Buscar por nome
+        </Text>
+      </Pressable>
+      <FlatList
+        style={styles.list}
+        data={paises}
+        renderItem={({ item }) => (
+          <View style={styles.listItem}>
+            <Text style={styles.listItemText}>
+              Nome comum do pais: {item.name.common}
+            </Text>
+          </View>
+        )}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  button: {
+    width: '80%',
+    backgroundColor: '#0096F3',
+    padding: 12,
+    borderRadius: 4
+  },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center'
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingVertical: 60
   },
+  input: {
+    width: '80%',
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 12,
+    padding: 8,
+    textAlign: 'center',
+    borderRadius: 4
+  },
+  list: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    width: '80%',
+    marginTop: 8,
+    padding: 8
+  },
+  listItem: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: 'gray',
+    backgroundColor: '#f0f0f0',
+    textAlign: 'center',
+    marginBottom: 4,
+    borderRadius: 4,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  listItemText: {
+    textAlign: 'center',
+    width: '100%'
+  }
 });
