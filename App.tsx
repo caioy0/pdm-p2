@@ -35,27 +35,46 @@ export default function App() {
   const [capital, setCapital] = useState<Capital[]>([])
 
   const buscarPorNome = async () => {
-    const resposta = await fetch(
-      `https://restcountries.com/v3.1/name/${busca}`
-    )
-    const info: Pais[] = await resposta.json()
+    try {
+      const resposta = await fetch(
+        `https://restcountries.com/v3.1/name/${busca}`
+      )
 
-    const pais = info[0]
+      if (!resposta.ok) {
+      throw new Error()
+    }
 
-    setPaises([pais])
+      const info: Pais[] = await resposta.json();
+      const pais = info[0];
+  
+      setPaises([pais]);
+      
+    } catch (error) {
+      alert(`${busca} nao encontrada`);
+      console.log(error);
+    }
   }
 
   const buscarPorCapital = async () => {
-  const resposta = await fetch(
-    `https://restcountries.com/v3.1/capital/${buscaCapital}`
-  )
+    try {
+      const resposta = await fetch(
+        `https://restcountries.com/v3.1/capital/${buscaCapital}`
+      )
 
-  const info: Capital[] = await resposta.json()
-
-  const capital = info[0]
-
-  setCapital([capital])
-}
+      if (!resposta.ok) {
+      throw new Error()
+    }
+  
+      const info: Capital[] = await resposta.json();
+      const capital = info[0];
+  
+      setCapital([capital]);
+      
+    } catch (error) {
+      alert(`${buscaCapital} nao encontrada`);
+      console.log(error);
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -91,14 +110,14 @@ export default function App() {
       />
 
       <View style={{ height: 20 }} />
-      
+
       <TextInput
         style={styles.input}
         placeholder='Digite a capital...'
         value={buscaCapital}
         onChangeText={(novoTexto) => setBuscaCapital(novoTexto)}
       />
-    
+
       <Pressable
         onPress={buscarPorCapital}
         style={styles.button}>
@@ -122,7 +141,7 @@ export default function App() {
           </View>
         )}
       />
-      
+
     </View>
   );
 }
@@ -178,8 +197,8 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   bandeira: {
-  width: 120,
-  height: 80,
-  marginTop: 8
+    width: 120,
+    height: 80,
+    marginTop: 8
   }
 });
