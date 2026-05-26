@@ -14,6 +14,12 @@ interface Pais {
     common: string;
     official: string;
   };
+  translations?: {
+    rus?: {
+      official?: string;
+      common?: string;
+    };
+  };
   flags: {
     png: string;
   };
@@ -104,6 +110,10 @@ export default function App() {
 
             <Text style={styles.listItemText}>
               Nome oficial do pais: {item.name.official}
+            </Text>
+            
+            <Text style={styles.listItemText}>
+              Nome em russo: {item.translations?.rus?.official || item.translations?.rus?.common || 'Traducao nao disponivel'}
             </Text>
           </View>
         )}
