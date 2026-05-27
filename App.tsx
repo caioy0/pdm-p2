@@ -23,6 +23,9 @@ interface Pais {
   flags: {
     png: string;
   };
+  maps: {
+    openStreetMaps: string;
+  };
 }
 
 interface Capital {
@@ -114,6 +117,10 @@ export default function App() {
             
             <Text style={styles.listItemText}>
               Nome em russo: {item.translations?.rus?.official || item.translations?.rus?.common || 'Traducao nao disponivel'}
+            </Text>
+
+            <Text style={styles.listItemText}>
+              OpenStreetMap: {item.maps.openStreetMaps}
             </Text>
           </View>
         )}
